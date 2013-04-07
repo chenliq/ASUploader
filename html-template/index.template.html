@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0014)about:internet -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"> 
+    <!-- 
+    Smart developers always View Source. 
+    
+    This application was built using Adobe Flex, an open source framework
+    for building rich Internet applications that get delivered via the
+    Flash Player or to desktops via Adobe AIR. 
+    
+    Learn more about Flex at http://flex.org 
+    // -->
+    <head>
+        <title></title>         
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <!-- Include CSS to eliminate any default margins/padding and set the height of the html element and 
+             the body element to 100%, because Firefox, or any Gecko based browser, interprets percentage as 
+             the percentage of the height of its parent container, which has to be set explicitly.  Initially, 
+             don't display flashContent div so it won't show if JavaScript disabled.
+        -->
+        <style type="text/css" media="screen"> 
+            html, body  { height:100%; }
+            body { margin:0; padding:0; overflow:auto; text-align:center; 
+                   background-color: #ffffff; } 
+        </style>
+            
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
+        <script>!window.jQuery && document.write('<script src="http://code.jquery.com/jquery-1.4.2.min.js"><\/script>');</script>
+        <script type="text/javascript" src="ASUploader.js"></script>
+        <script type="text/javascript">
+            function uploadCompleteCallback(request) {
+                alert(request);
+            };
+            window.onload = function(){
+                
+                ASUploader = new ASUploader({
+                    movieName               : "ASUploaderFlash",
+                    uploadUrl               : "../upload.php",
+                    lableText               : "选择文件",
+                    textTopPadding          : 0,
+                    textLeftPadding         : 0,
+                    width                   : 80,
+                    height                  : 30,
+                    //fileTypesDesc         : "Image",
+                    //fileTypes             : "*.png;*.jpg;*.gif",
+                    fileTypesDesc           : "All Files",
+                    fileTypes               : "*.*",
+                    postParams              : {'multi_merge':1, "more_params":"much more"},
+                    fileQueueLimit          : 5,
+                    multiFiles              : true,
+                    autoUpload              : false,
+                    uploadCompleteHandler   : "uploadComplete"
+                })
+                .create();
+            };
+        </script>
+    </head>
+    <body>
+        <!-- SWFObject's dynamic embed method replaces this alternative HTML content with Flash content when enough 
+             JavaScript and Flash plug-in support is available. The div is initially hidden so that it doesn't show
+             when JavaScript is disabled.
+        -->
+    <button onclick="setParams()">send</button>
+    <button onclick="ASUploader.upload()">upload</button>
+    <div id="ASUploaderPlaceHolder"></div>
+   </body>
+</html>
