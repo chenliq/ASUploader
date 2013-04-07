@@ -3,16 +3,13 @@
 //echo '<pre>';
 header('content-type:text/plain;charset=utf-8');
 
-// if (empty($_POST['_PostFromASUploader_'])) {
-	var_export($_FILES);
-	//file_put_contents('tt.txt', var_export($_FILES,true));
-	// var_export($_POST);
-	echo "\n";
-	$destFile = dirname(__FILE__).'/'.$_FILES[0]['name'];
-	echo $destFile;
-	move_uploaded_file($_FILES[0]['tmp_name'], $destFile);
-	exit;
-// }
+// var_export($_FILES);
+// echo "\n";
+// $destFile = dirname(__FILE__).'/'.$_FILES[0]['name'];
+// echo $destFile;
+// move_uploaded_file($_FILES[0]['tmp_name'], $destFile);
+file_put_contents('t.txt', var_export($_FILES,true));
+exit;
 
 
 if (empty($_POST['multi_merge'])) {
@@ -54,11 +51,5 @@ foreach ($_FILES as $file) {
 $filename = dirname(__FILE__).'/test.jpg';
 imagejpeg($pic, $filename);
 
-//echo 'FILEID:';
-//var_export($_FILES);
-//echo "\n";
-//var_export($_POST);
-//echo "\n";
-//
-echo 'ok!!!';
-//file_put_contents(dirname(__FILE__).'/tt.txt', var_export($_FILES,true)."\n".var_export($_POST,true));
+
+//echo 'ok!!!';

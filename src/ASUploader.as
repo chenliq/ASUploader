@@ -255,6 +255,8 @@ package
 			
 			loader.load(request);
 			
+			this.fileQueue = {};
+			
 		}
 		
 		private function progressHandler(event:ProgressEvent):void {
