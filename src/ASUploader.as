@@ -30,6 +30,7 @@ package
 		public var fileMulti:FileReferenceList;
 		public var fileOne:FileReference;
 		public var setParamList:Array;
+		public var fileCompleteNum:int = 0;
 		
 		public var request:URLRequest;
 		public var boundary:String = "---BbC04y";// 数据分界符
@@ -141,7 +142,7 @@ package
 			this.fileQueue = [];
 			
 			
-			this.fileMulti = new FileReferenceList();
+			this.fileMulti = null;
 			this.fileOne = null;
 			
 			this.buttonMode = true;
@@ -163,13 +164,6 @@ package
 			this.btnTxtField.addEventListener(MouseEvent.CLICK, selectFiles); 
 			addChild(this.btnTxtField);
 			
-			
-			this.fileMulti.addEventListener(Event.COMPLETE, complete);
-			this.fileMulti.addEventListener(Event.OPEN,open);
-			//点击取消按钮会广播这个事件
-			this.fileMulti.addEventListener(Event.CANCEL, cancel);
-			this.fileMulti.addEventListener(Event.SELECT, select);
-			this.fileMulti.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			
 			//			onResize(null);
 			
@@ -196,6 +190,13 @@ package
 			
 			try{
 				if (this.multiFiles) {
+					this.fileMulti = new FileReferenceList();
+					this.fileMulti.addEventListener(Event.COMPLETE, complete);
+					this.fileMulti.addEventListener(Event.OPEN,open);
+					//点击取消按钮会广播这个事件
+					this.fileMulti.addEventListener(Event.CANCEL, cancel);
+					this.fileMulti.addEventListener(Event.SELECT, select);
+					this.fileMulti.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 					this.fileMulti.browse([new FileFilter(allowed_file_types_desc, allowed_file_types)]);
 				} else {
 					this.fileOne = new FileReference();
@@ -252,7 +253,6 @@ package
 			loader.addEventListener(Event.COMPLETE, uploadComplete);
 			loader.addEventListener(ProgressEvent.PROGRESS, progressHandler);
 			
-			
 			loader.load(request);
 			
 			this.fileQueue = {};
@@ -263,31 +263,9 @@ package
 			this.debug("progressHandler loaded:" + event.bytesLoaded + " total: " + event.bytesTotal);
 		}
 		
-		
-		
 		/**
-		 * 上传完成处理方法
+		 * 同时选择多个文件
 		 */
-		public function uploadComplete(event:Event):void {
-			// JS有上传完成回调函数,则调用
-			if (this.uploadCompleteHandler) {
-				// event.target.data.toString() 服务端返回的字符串
-				this.debug(event.target.data.toString());
-				ExternalInterface.call(this.uploadCompleteHandler, event.target.data.toString());
-			}
-		}
-		
-		
-		
-		public function complete(e:Event):void {
-		}
-		
-		public function open(e:Event):void {
-		}
-		
-		public function cancel(e:Event):void {
-		}
-		
 		public function select(e:Event):void {
 			for(var i:uint=0;i<this.fileMulti.fileList.length;i++)
 			{
@@ -334,44 +312,13 @@ package
 			
 			if (this.fileQueueLimit>0 && this.queueCounts > this.fileQueueLimit) {
 				return false;
-			} else if (this.autoUpload)  {
+			}
+			this.fileCompleteNum++;
+			if (this.autoUpload && this.fileCompleteNum==this.fileMulti.fileList.length)
+			{
 				this.upload();
 			}
 			return true;
-		}
-		
-		/**
-		 * 根据文件头两字节来判断MimeType类型
-		 */
-		public function getMimeTypeFromBytes(byte1:int, byte2:int):String {
-			var code:String = byte1+""+byte2;
-			var mimeType:String = "UnKnow";
-			switch (code) {
-				case "7790":
-					mimeType = 'application/octet-stream';
-				case "6787":
-					mimeType = 'application/x-shockwave-flash';
-					break;
-				case "8075":
-					mimeType = 'application/bmp';
-					break;
-				case "6677":
-					mimeType = 'image/bmp';
-					break;
-				case "7173":
-					mimeType = 'image/gif';
-					break;
-				case "255216":
-					mimeType = 'image/jpeg';
-					break;
-				case "13780":
-					mimeType = 'image/png';
-					break;
-				case "79103":
-					mimeType = 'application/ogg';
-					break;
-			}
-			return mimeType;
 		}
 		
 		public function setHeader(headerName:String, headerValue:String):void {
@@ -431,6 +378,61 @@ package
 					}
 				}
 			}
+		}
+		
+		/**
+		 * 上传完成处理方法
+		 */
+		public function uploadComplete(event:Event):void {
+			// JS有上传完成回调函数,则调用
+			if (this.uploadCompleteHandler) {
+				// event.target.data.toString() 服务端返回的字符串
+				this.debug(event.target.data.toString());
+				ExternalInterface.call(this.uploadCompleteHandler, event.target.data.toString());
+			}
+		}
+		
+		public function complete(e:Event):void {
+		}
+		
+		public function open(e:Event):void {
+		}
+		
+		public function cancel(e:Event):void {
+		}
+		
+		/**
+		 * 根据文件头两字节来判断MimeType类型
+		 */
+		public function getMimeTypeFromBytes(byte1:int, byte2:int):String {
+			var code:String = byte1+""+byte2;
+			var mimeType:String = "UnKnow";
+			switch (code) {
+				case "7790":
+					mimeType = 'application/octet-stream';
+				case "6787":
+					mimeType = 'application/x-shockwave-flash';
+					break;
+				case "8075":
+					mimeType = 'application/bmp';
+					break;
+				case "6677":
+					mimeType = 'image/bmp';
+					break;
+				case "7173":
+					mimeType = 'image/gif';
+					break;
+				case "255216":
+					mimeType = 'image/jpeg';
+					break;
+				case "13780":
+					mimeType = 'image/png';
+					break;
+				case "79103":
+					mimeType = 'application/ogg';
+					break;
+			}
+			return mimeType;
 		}
 		
 		public function debug(debugInfo:String):void {
